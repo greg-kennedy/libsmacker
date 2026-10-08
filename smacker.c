@@ -1677,6 +1677,12 @@ static char smk_render(smk s)
 					((unsigned int) p[1] << 8) |
 					((unsigned int) p[0]));
 
+			/* the size includes its own 4 bytes */
+			if (size < 4) {
+				fprintf(stderr, "libsmacker::smk_render(s) - ERROR: frame %lu: audio[%u] rec size %lu is smaller than its length field.\n", s->cur_frame, track, size);
+				goto error;
+			}
+
 			/* If audio rendering enabled, kick this off for decode. */
 			if (s->audio[track].enable)
 				smk_render_audio(&s->audio[track], p + 4, size - 4);
