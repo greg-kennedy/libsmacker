@@ -1653,6 +1653,12 @@ static char smk_render(smk s)
 			subsequent bytes are present */
 		size = 4 * (*p);
 
+		/* the size includes the length byte itself */
+		if (size == 0) {
+			fprintf(stderr, "libsmacker::smk_render(s) - ERROR: frame %lu: palette rec size is 0.\n", s->cur_frame);
+			goto error;
+		}
+
 		/* If video rendering enabled, kick this off for decode. */
 		if (s->video.enable)
 			smk_render_palette(&(s->video), p + 1, size - 1);
