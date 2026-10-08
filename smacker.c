@@ -1541,19 +1541,35 @@ static char smk_render_audio(struct smk_audio_t * s, unsigned char * p, unsigned
 
 		/* read initial sound level */
 		if (s->channels == 2) {
-			unpack = smk_bs_read_8(&bs);
+			if ((unpack = smk_bs_read_8(&bs)) < 0) {
+				fputs("libsmacker::smk_render_audio() - ERROR: failed to read initial sound level.\n", stderr);
+				goto error;
+			}
 
 			if (s->bitdepth == 16) {
-				((short *)t)[1] = smk_bs_read_8(&bs);
+				if ((unpack2 = smk_bs_read_8(&bs)) < 0) {
+					fputs("libsmacker::smk_render_audio() - ERROR: failed to read initial sound level.\n", stderr);
+					goto error;
+				}
+
+				((short *)t)[1] = unpack2;
 				((short *)t)[1] |= (unpack << 8);
 			} else
 				((unsigned char *)t)[1] = (unsigned char)unpack;
 		}
 
-		unpack = smk_bs_read_8(&bs);
+		if ((unpack = smk_bs_read_8(&bs)) < 0) {
+			fputs("libsmacker::smk_render_audio() - ERROR: failed to read initial sound level.\n", stderr);
+			goto error;
+		}
 
 		if (s->bitdepth == 16) {
-			((short *)t)[0] = smk_bs_read_8(&bs);
+			if ((unpack2 = smk_bs_read_8(&bs)) < 0) {
+				fputs("libsmacker::smk_render_audio() - ERROR: failed to read initial sound level.\n", stderr);
+				goto error;
+			}
+
+			((short *)t)[0] = unpack2;
 			((short *)t)[0] |= (unpack << 8);
 		} else
 			((unsigned char *)t)[0] = (unsigned char)unpack;
