@@ -712,6 +712,12 @@ static smk smk_open_generic(const unsigned char m, union smk_read_t fp, unsigned
 	smk_read_ul(s->video.w);
 	smk_read_ul(s->video.h);
 	smk_read_ul(s->f);
+
+	if (s->f == 0) {
+		fputs("libsmacker::smk_open_generic - ERROR: file has no frames\n", stderr);
+		goto error;
+	}
+
 	/* frames per second calculation */
 	smk_read_ul(temp_u);
 	temp_l = (int)temp_u;
