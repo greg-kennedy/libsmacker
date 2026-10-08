@@ -1481,6 +1481,11 @@ static char smk_render_audio(struct smk_audio_t * s, unsigned char * p, unsigned
 
 	if (!s->compress) {
 		/* Raw PCM data, update buffer size and perform copy */
+		if (size > (unsigned long)s->max_buffer) {
+			fprintf(stderr, "libsmacker::smk_render_audio() - ERROR: PCM size %lu exceeds buffer size %lu.\n", size, (unsigned long)s->max_buffer);
+			goto error;
+		}
+
 		s->buffer_size = size;
 		memcpy(t, p, size);
 	} else if (s->compress == 1) {
