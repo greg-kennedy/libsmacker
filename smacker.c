@@ -1519,22 +1519,38 @@ static char smk_render_audio(struct smk_audio_t * s, unsigned char * p, unsigned
 			fputs("libsmacker::smk_render - ERROR: 8-/16-bit mismatch\n", stderr);
 
 		/* build the trees */
-		smk_huff8_build(&aud_tree[0], &bs);
+		if (! smk_huff8_build(&aud_tree[0], &bs)) {
+			fputs("libsmacker::smk_render_audio() - ERROR: failed to build audio tree 0.\n", stderr);
+			goto error;
+		}
+
 		j = 1;
 		k = 1;
 
 		if (s->bitdepth == 16) {
-			smk_huff8_build(&aud_tree[1], &bs);
+			if (! smk_huff8_build(&aud_tree[1], &bs)) {
+				fputs("libsmacker::smk_render_audio() - ERROR: failed to build audio tree 1.\n", stderr);
+				goto error;
+			}
+
 			k = 2;
 		}
 
 		if (s->channels == 2) {
-			smk_huff8_build(&aud_tree[2], &bs);
+			if (! smk_huff8_build(&aud_tree[2], &bs)) {
+				fputs("libsmacker::smk_render_audio() - ERROR: failed to build audio tree 2.\n", stderr);
+				goto error;
+			}
+
 			j = 2;
 			k = 2;
 
 			if (s->bitdepth == 16) {
-				smk_huff8_build(&aud_tree[3], &bs);
+				if (! smk_huff8_build(&aud_tree[3], &bs)) {
+					fputs("libsmacker::smk_render_audio() - ERROR: failed to build audio tree 3.\n", stderr);
+					goto error;
+				}
+
 				k = 4;
 			}
 		}
