@@ -1653,6 +1653,12 @@ static char smk_render(smk s)
 			subsequent bytes are present */
 		size = 4 * (*p);
 
+		/* the record must fit in the chunk */
+		if (size > i) {
+			fprintf(stderr, "libsmacker::smk_render(s) - ERROR: frame %lu: palette rec size %lu exceeds chunk size %lu.\n", s->cur_frame, size, i);
+			goto error;
+		}
+
 		/* If video rendering enabled, kick this off for decode. */
 		if (s->video.enable)
 			smk_render_palette(&(s->video), p + 1, size - 1);
