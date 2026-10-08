@@ -1677,6 +1677,12 @@ static char smk_render(smk s)
 					((unsigned int) p[1] << 8) |
 					((unsigned int) p[0]));
 
+			/* the record must fit in what is left of the chunk */
+			if (size > i) {
+				fprintf(stderr, "libsmacker::smk_render(s) - ERROR: frame %lu: audio[%u] rec size %lu exceeds remaining chunk size %lu.\n", s->cur_frame, track, size, i);
+				goto error;
+			}
+
 			/* If audio rendering enabled, kick this off for decode. */
 			if (s->audio[track].enable)
 				smk_render_audio(&s->audio[track], p + 4, size - 4);
